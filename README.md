@@ -23,5 +23,9 @@ StopPlayerCameraRotate
 # Example
 An example is located at ``example.pwn`` - just an edited ``bare.pwn``
 
+## Video
+
+<a href="https://www.youtube.com/watch?v=A9_IA5tzcAg">Here</a>
+
 # Extra credits
 * robin_be for helping
