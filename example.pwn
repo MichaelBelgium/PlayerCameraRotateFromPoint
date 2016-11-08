@@ -19,7 +19,7 @@ public OnPlayerConnect(playerid)
 CMD:test(playerid,params[])
 {
 	new id, Float:x, Float:y, Float:z;
-	if(sscanf(params,"I(2)",id)) return 0;
+	if(sscanf(params,"i",id)) return 0;
 
 	GetPlayerPos(playerid, x, y, z);
 
