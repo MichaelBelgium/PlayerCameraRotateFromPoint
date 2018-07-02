@@ -9,7 +9,7 @@ native StopPlayerCameraRotate(playerid);
 
 ## Clarification
 
-PlayerCameraRotateFromPoint
+### PlayerCameraRotateFromPoint
 * playerid - the id of the player to set the camera rotation
 * Float:x, Float:y, Float:z - the x, y and z position in-game.
 * Float: range - how far the camera should rotate from the position aka range.
@@ -17,11 +17,12 @@ PlayerCameraRotateFromPoint
 * cam_overview - should the camera act like an "overview", meaning it'll look down to the position instead of otherwise. (Optional / Default = no)
 * cam_overview_height - the height of the camera that has to be added to the z position (so it can look down) (Optional / Default = 20)
 
-StopPlayerCameraRotate
+### StopPlayerCameraRotate
 * playerid - the id of the player to stop the camera rotation
 
-# Example
-An example is located at ``example.pwn`` - just an edited ``bare.pwn``
+# Example/Installation
+* An example is located at ``example.pwn`` - just an edited ``bare.pwn``
+* Download it manually or use sampctl: `sampctl package install MichaelBelgium/PlayerCameraRotateFromPoint`
 
 ## Video
 

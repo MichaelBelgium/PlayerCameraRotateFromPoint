@@ -1,0 +1,9 @@
+{
+	"user": "MichaelBelgium",
+	"repo": "PlayerCameraRotateFromPoint",
+	"entry": "example.pwn",
+	"output": "example.amx",
+	"dependencies": [
+		"sampctl/samp-stdlib"
+	]
+}
