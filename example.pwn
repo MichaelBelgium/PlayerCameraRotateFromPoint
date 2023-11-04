@@ -38,6 +38,24 @@ CMD:stop(playerid,params[])
 	return 1;
 }
 
+CMD:continue(playerid,params[])
+{
+	ContinuePlayerCameraRotate(playerid);
+	return 1;
+}
+
+CMD:left(playerid,params[])
+{
+	SetPlayerCameraRotateToLeft(playerid);
+	return 1;
+}
+
+CMD:right(playerid,params[])
+{
+	SetPlayerCameraRotateToRight(playerid);
+	return 1;
+}
+
 public OnPlayerSpawn(playerid)
 {
 	StopPlayerCameraRotate(playerid);
