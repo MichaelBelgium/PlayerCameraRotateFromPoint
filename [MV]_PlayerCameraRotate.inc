@@ -1,18 +1,59 @@
+/*
+							PlayerCameraRotateFromPoint
+	A San Andreas Multiplayer include to let the camera of a player rotate around a position.
+
+	Author: 
+		MichaelBelgium
+
+	Github repository: 
+		https://github.com/MichaelBelgium/PlayerCameraRotateFromPoint
+
+	Contributors: 
+		MichaelBelgium
+		adib-yg
+
+	--------------------------------------------------------------------------------
+
+	# Log change:
+
+		## 2023-11-04 [4 Nov 2023]
+
+			### New functions:
+				* ContinuePlayerCameraRotate(playerid);
+				* SetPlayerCameraRotateToLeft(playerid);
+				* SetPlayerCameraRotateToRight(playerid);
+
+			### New function parameters:
+				* StopPlayerCameraRotate(playerid, bool:set_camera_behind = true);
+
+			### Fixes:
+				* Fixed 'OnPlayerConnect' hook
+*/
+
 #include <a_samp>
 
-#define MAX_CAM_STOPS	8 		//it's not possible to have the players camera rotate in a fill circle. In stead we work with stops. (Which means a polygon structure)
-#define CAM_DELAY		2000 	//set to 0 to have no delay between camera stops
+#if !defined MAX_CAM_STOPS
+	#define MAX_CAM_STOPS 8
+	// it's not possible to have the players camera rotate in a fill circle. 
+	// Instead we work with stops. (Which means a polygon structure)
+#endif
+#if !defined CAM_DELAY
+	#define CAM_DELAY 2000
+	// set to 0 to have no delay between camera stops
+#endif
 
-enum pCamData
+static enum pCamData
 {
 	Float:CamPos[3],
 	Float:Height,
 	Speed,
 	bool:Rotating,
-	bool:Overview
+	bool:Overview,
+	CurrentID,
+	RotateDirection // 1 = Left | 0 = Right
 };
 
-new g_pCamera[MAX_PLAYERS][pCamData], Float:g_CameraPositions[MAX_PLAYERS][MAX_CAM_STOPS][2];
+static g_pCamera[MAX_PLAYERS][pCamData], Float:g_CameraPositions[MAX_PLAYERS][MAX_CAM_STOPS][2];
 
 forward MoveCamera(playerid,id);
 forward Float:GetCameraPositionsFromPoint(Float:x, Float:y, Float:radius);
@@ -31,22 +72,50 @@ stock PlayerCameraRotateFromPoint(playerid, Float:x, Float:y, Float:z, Float:ran
 	g_CameraPositions[playerid] = GetCameraPositionsFromPoint(g_pCamera[playerid][CamPos][0], g_pCamera[playerid][CamPos][1], range);
 	g_pCamera[playerid][Rotating] = true;
 
-	MoveCamera(playerid, 0);
+	MoveCamera(playerid, (g_pCamera[playerid][RotateDirection] == 1 ? MAX_CAM_STOPS-1 : 0));
 	return 1;
 }
 
-stock StopPlayerCameraRotate(playerid) 
+stock StopPlayerCameraRotate(playerid, bool:set_camera_behind = true)
 {
-	g_pCamera[playerid][Rotating] = false;
-	SetCameraBehindPlayer(playerid);
+	if (g_pCamera[playerid][Rotating]) {
+		g_pCamera[playerid][Rotating] = false;
+		if(set_camera_behind) SetCameraBehindPlayer(playerid);
+	}
+}
+
+stock ContinuePlayerCameraRotate(playerid)
+{
+	if (g_pCamera[playerid][Speed] != 0)
+	{ 
+		g_pCamera[playerid][Rotating] = true;
+		MoveCamera(playerid, g_pCamera[playerid][CurrentID]);
+	}
+}
+
+stock SetPlayerCameraRotateToLeft(playerid)
+{
+	g_pCamera[playerid][RotateDirection] = 1;
+}
+
+stock SetPlayerCameraRotateToRight(playerid)
+{
+	g_pCamera[playerid][RotateDirection] = 0;
 }
 
 public MoveCamera(playerid,id)
 {
 	if(g_pCamera[playerid][Rotating])
 	{
-		new oID = id, nID = ++id % MAX_CAM_STOPS;
+		new oID = id, nID;
+
+		if (g_pCamera[playerid][RotateDirection] == 1) 
+			nID = --id % MAX_CAM_STOPS; // Left
+		else
+			nID = ++id % MAX_CAM_STOPS; // Right
 		
+		g_pCamera[playerid][CurrentID] = nID;
+
 		if(!g_pCamera[playerid][Overview])
 			InterpolateCameraPos(playerid, g_CameraPositions[playerid][oID][0], g_CameraPositions[playerid][oID][1], g_pCamera[playerid][CamPos][2], g_CameraPositions[playerid][nID][0], g_CameraPositions[playerid][nID][1],  g_pCamera[playerid][CamPos][2], g_pCamera[playerid][Speed], CAMERA_MOVE);
 		else
@@ -75,12 +144,21 @@ stock Float:GetCameraPositionsFromPoint(Float:x, Float:y, Float:radius)
 public OnPlayerConnect(playerid)
 {
 	g_pCamera[playerid][Rotating] = false;
-	return 1;
+	g_pCamera[playerid][RotateDirection] = 0;
+
+	#if defined CameraRotate_OnPlayerConnect
+		return CameraRotate_OnPlayerConnect(playerid);
+	#else
+		return 1;
+	#endif
 }
 #if defined _ALS_OnPlayerConnect
 	#undef OnPlayerConnect
 #else
 	#define _ALS_OnPlayerConnect
 #endif
-#define OnPlayerConnect MV_OnFilterScriptInit
-forward MV_OnFilterScriptInit(playerid);
+
+#define OnPlayerConnect CameraRotate_OnPlayerConnect
+#if defined CameraRotate_OnPlayerConnect
+	forward CameraRotate_OnPlayerConnect(playerid);
+#endif
