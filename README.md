@@ -4,7 +4,10 @@ A San Andreas Multiplayer include to let the camera of a player rotate around a 
 # Functions
 ```PAWN
 native PlayerCameraRotateFromPoint(playerid, Float:x, Float:y, Float:z, Float:range, cam_speed = 3, bool: cam_overview = false, Float: cam_overview_height = 20.0);
-native StopPlayerCameraRotate(playerid);
+native StopPlayerCameraRotate(playerid, bool:set_camera_behind = true);
+native ContinuePlayerCameraRotate(playerid);
+native SetPlayerCameraRotateToLeft(playerid);
+native SetPlayerCameraRotateToRight(playerid);
 ```
 
 ## Clarification
@@ -19,6 +22,16 @@ native StopPlayerCameraRotate(playerid);
 
 ### StopPlayerCameraRotate
 * playerid - the id of the player to stop the camera rotation
+* bool: set_camera_behind - set camera behind player (Default = yes)
+
+### ContinuePlayerCameraRotate
+* playerid - the id of the player to continue the camera rotation
+
+### SetPlayerCameraRotateToLeft
+* playerid - the id of the player to set the camera rotation to left
+
+### SetPlayerCameraRotateToRight
+* playerid - the id of the player to set the camera rotation to right
 
 # Example/Installation
 * An example is located at ``example.pwn`` - just an edited ``bare.pwn``
