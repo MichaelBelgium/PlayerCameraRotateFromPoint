@@ -86,7 +86,7 @@ stock StopPlayerCameraRotate(playerid, bool:set_camera_behind = true)
 
 stock ContinuePlayerCameraRotate(playerid)
 {
-	if (g_pCamera[playerid][Speed] != 0)
+	if (!g_pCamera[playerid][Rotating] && g_pCamera[playerid][Speed] != 0)
 	{ 
 		g_pCamera[playerid][Rotating] = true;
 		MoveCamera(playerid, g_pCamera[playerid][CurrentID]);
